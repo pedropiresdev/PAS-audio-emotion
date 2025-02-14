@@ -63,4 +63,6 @@ arquivos podem ser escritos em tempo de execução na memória da aplicação e 
 
 **Modelo de IA**: Analisa o tom de voz e retorna emoções detectadas.
 
+![diagrama_contexto_b6](https://github.com/user-attachments/assets/f73925c4-78ce-4726-9556-af478760ff10)
+
 
