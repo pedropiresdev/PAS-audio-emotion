@@ -1,2 +1,11 @@
 fastapi[standard]
 uvicorn
+python-dotenv
+openai-whisper
+moviepy
+openai
+librosa
+numpy
+soundfile
+scikit-learn
+joblib

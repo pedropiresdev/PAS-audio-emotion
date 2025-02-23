@@ -2,17 +2,20 @@ import os
 import whisper
 import librosa
 import numpy as np
-import soundfile as sf
 import joblib
 from openai import OpenAI
 
-from moviepy import AudioFileClip, VideoFileClip
+from moviepy import VideoFileClip
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 # Carregar modelo Whisper para transcrição
 model = whisper.load_model("base")
-client = OpenAI(api_key="")
+client = OpenAI(api_key=os.getenv("OPEN_AI_KEY"))
 
 
 def extract_audio(input_file):
