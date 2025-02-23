@@ -1,7 +1,14 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi import FastAPI, File, UploadFile
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 import os
+import shutil
+import uuid
 from pathlib import Path
+
+import uvicorn
+
+from backend.src.transcriptor import process_file
 
 UPLOAD_DIR = Path("uploads")
 UPLOAD_DIR.mkdir(exist_ok=True)
@@ -17,20 +24,28 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.post("/upload/")
+@app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
-    # Verifica extensão do arquivo
-    allowed_extensions = {".mp3", ".wav", ".mp4", ".avi", ".mov"}
-    file_extension = Path(file.filename).suffix.lower()
+    try:
+        # Salvar o arquivo com um nome único
+        file_id = str(uuid.uuid4())
+        file_path = os.path.join(UPLOAD_DIR, f"{file_id}_{file.filename}")
 
-    if file_extension not in allowed_extensions:
-        raise HTTPException(status_code=405, detail="Extensão de arquivo não permitida.")
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
 
-    # Caminho onde o arquivo será salvo
-    file_path = UPLOAD_DIR / file.filename
+        # Simula a análise do áudio/vídeo
+        emotion_result = analyze_audio(file_path)
 
-    # Escreve o arquivo no disco
-    with open(file_path, "wb") as buffer:
-        buffer.write(await file.read())
+        return JSONResponse(content={"message": "Upload bem-sucedido", "emotion": emotion_result})
 
-    return {"filename": file.filename, "message": "Upload realizado com sucesso."}
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=500)
+
+
+# Simulação de análise de emoções no áudio
+def analyze_audio(file_path: str):
+    return process_file(file_path)
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="127.0.0.1", port=8000)
