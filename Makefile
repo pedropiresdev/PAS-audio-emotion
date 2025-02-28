@@ -45,7 +45,7 @@ up:
 	docker-compose up --build
 
 r:
-	uvicorn backend.src.main:app --reload
+	uvicorn backend.src.main:app --reload --port 8000
 
 load:
 	locust -f tests/load.py
